@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -47,10 +48,15 @@ public class FormatTest   {
   @SerializedName("dateTime")
   private Date dateTime = null;
 
+  @SerializedName("uuid")
+  private UUID uuid = null;
+
   @SerializedName("password")
   private String password = null;
 
   /**
+   * minimum: 10.0
+   * maximum: 100.0
    **/
   @ApiModelProperty(value = "")
   public Integer getInteger() {
@@ -61,6 +67,8 @@ public class FormatTest   {
   }
 
   /**
+   * minimum: 20.0
+   * maximum: 200.0
    **/
   @ApiModelProperty(value = "")
   public Integer getInt32() {
@@ -81,6 +89,8 @@ public class FormatTest   {
   }
 
   /**
+   * minimum: 32.1
+   * maximum: 543.2
    **/
   @ApiModelProperty(required = true, value = "")
   public BigDecimal getNumber() {
@@ -91,6 +101,8 @@ public class FormatTest   {
   }
 
   /**
+   * minimum: 54.3
+   * maximum: 987.6
    **/
   @ApiModelProperty(value = "")
   public Float getFloat() {
@@ -101,6 +113,8 @@ public class FormatTest   {
   }
 
   /**
+   * minimum: 67.8
+   * maximum: 123.4
    **/
   @ApiModelProperty(value = "")
   public Double getDouble() {
@@ -122,7 +136,7 @@ public class FormatTest   {
 
   /**
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public byte[] getByte() {
     return _byte;
   }
@@ -142,7 +156,7 @@ public class FormatTest   {
 
   /**
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public Date getDate() {
     return date;
   }
@@ -163,6 +177,16 @@ public class FormatTest   {
   /**
    **/
   @ApiModelProperty(value = "")
+  public UUID getUuid() {
+    return uuid;
+  }
+  public void setUuid(UUID uuid) {
+    this.uuid = uuid;
+  }
+
+  /**
+   **/
+  @ApiModelProperty(required = true, value = "")
   public String getPassword() {
     return password;
   }
@@ -191,12 +215,13 @@ public class FormatTest   {
         Objects.equals(binary, formatTest.binary) &&
         Objects.equals(date, formatTest.date) &&
         Objects.equals(dateTime, formatTest.dateTime) &&
+        Objects.equals(uuid, formatTest.uuid) &&
         Objects.equals(password, formatTest.password);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(integer, int32, int64, number, _float, _double, string, _byte, binary, date, dateTime, password);
+    return Objects.hash(integer, int32, int64, number, _float, _double, string, _byte, binary, date, dateTime, uuid, password);
   }
 
   @Override
@@ -215,6 +240,7 @@ public class FormatTest   {
     sb.append("    binary: ").append(toIndentedString(binary)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    dateTime: ").append(toIndentedString(dateTime)).append("\n");
+    sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("}");
     return sb.toString();
