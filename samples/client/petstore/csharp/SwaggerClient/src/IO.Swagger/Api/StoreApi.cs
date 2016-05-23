@@ -289,6 +289,8 @@ namespace IO.Swagger.Api
         /// <returns>ApiResponse of Object(void)</returns>
         public ApiResponse<Object> DeleteOrderWithHttpInfo (string orderId)
         {
+                    if (orderId.HasValue && orderId < 1.0) 
+                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `DeleteOrder`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->DeleteOrder");
@@ -359,6 +361,8 @@ namespace IO.Swagger.Api
         /// <returns>Task of ApiResponse</returns>
         public async System.Threading.Tasks.Task<ApiResponse<Object>> DeleteOrderAsyncWithHttpInfo (string orderId)
         {
+                    if (orderId.HasValue && orderId < 1.0) 
+                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `DeleteOrder`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->DeleteOrder");
@@ -567,6 +571,10 @@ namespace IO.Swagger.Api
         /// <returns>ApiResponse of Order</returns>
         public ApiResponse< Order > GetOrderByIdWithHttpInfo (long? orderId)
         {
+                    if (orderId.HasValue && orderId > 5.0) 
+                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value less than or equal to  `5.0`");
+                    if (orderId.HasValue && orderId < 1.0) 
+                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->GetOrderById");
@@ -638,6 +646,10 @@ namespace IO.Swagger.Api
         /// <returns>Task of ApiResponse (Order)</returns>
         public async System.Threading.Tasks.Task<ApiResponse<Order>> GetOrderByIdAsyncWithHttpInfo (long? orderId)
         {
+                    if (orderId.HasValue && orderId > 5.0) 
+                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value less than or equal to  `5.0`");
+                    if (orderId.HasValue && orderId < 1.0) 
+                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->GetOrderById");
