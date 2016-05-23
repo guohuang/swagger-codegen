@@ -469,6 +469,7 @@ namespace IO.Swagger.Api
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling UserApi->CreateUser");
 
+
             var localVarPath = "/user";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -621,6 +622,7 @@ namespace IO.Swagger.Api
             // verify the required parameter 'body' is set
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling UserApi->CreateUsersWithArrayInput");
+
 
             var localVarPath = "/user/createWithArray";
             var localVarPathParams = new Dictionary<String, String>();
@@ -775,6 +777,7 @@ namespace IO.Swagger.Api
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling UserApi->CreateUsersWithListInput");
 
+
             var localVarPath = "/user/createWithList";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -928,6 +931,7 @@ namespace IO.Swagger.Api
             if (username == null)
                 throw new ApiException(400, "Missing required parameter 'username' when calling UserApi->DeleteUser");
 
+
             var localVarPath = "/user/{username}";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -1067,6 +1071,7 @@ namespace IO.Swagger.Api
             // verify the required parameter 'username' is set
             if (username == null)
                 throw new ApiException(400, "Missing required parameter 'username' when calling UserApi->GetUserByName");
+
 
             var localVarPath = "/user/{username}";
             var localVarPathParams = new Dictionary<String, String>();
@@ -1210,9 +1215,11 @@ namespace IO.Swagger.Api
             // verify the required parameter 'username' is set
             if (username == null)
                 throw new ApiException(400, "Missing required parameter 'username' when calling UserApi->LoginUser");
+
             // verify the required parameter 'password' is set
             if (password == null)
                 throw new ApiException(400, "Missing required parameter 'password' when calling UserApi->LoginUser");
+
 
             var localVarPath = "/user/login";
             var localVarPathParams = new Dictionary<String, String>();
@@ -1489,9 +1496,11 @@ namespace IO.Swagger.Api
             // verify the required parameter 'username' is set
             if (username == null)
                 throw new ApiException(400, "Missing required parameter 'username' when calling UserApi->UpdateUser");
+
             // verify the required parameter 'body' is set
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling UserApi->UpdateUser");
+
 
             var localVarPath = "/user/{username}";
             var localVarPathParams = new Dictionary<String, String>();

@@ -178,32 +178,33 @@ namespace {{packageName}}.Api
         public ApiResponse<{{#returnType}} {{{returnType}}} {{/returnType}}{{^returnType}}Object{{/returnType}}> {{operationId}}WithHttpInfo ({{#allParams}}{{{dataType}}} {{paramName}}{{^required}}{{#optionalMethodArgument}} = null{{/optionalMethodArgument}}{{/required}}{{#hasMore}}, {{/hasMore}}{{/allParams}})
         {
             {{#allParams}}
-            {{#hasValidation}}
-                {{#maxLength}}
-                    if ({{paramName}}.HasValue && {{paramName}}.Length > {{maxLength}})
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be less than or equal to `{{maxLength}}`");
-                {{/maxLength}}
-                {{#minLength}}
-                    if ({{paramName}}.HasValue && {{paramName}}.Length < {{minLength}})
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be greater than or equal to `{{minLength}}`");
-                {{/minLength}}
-                {{#maximum}}
-                    if ({{paramName}}.HasValue && {{paramName}} > {{maximum}}) 
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value less than or equal to  `{{maximum}}`");
-                {{/maximum}}
-                {{#minimum}}
-                    if ({{paramName}}.HasValue && {{paramName}} < {{minimum}}) 
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value greater than or equal to `{{minimum}}`");
-                {{/minimum}}
-                {{#pattern}}
-
-                {{/pattern}}
-            {{/hasValidation}}
             {{#required}}
             // verify the required parameter '{{paramName}}' is set
             if ({{paramName}} == null)
                 throw new ApiException(400, "Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}");
             {{/required}}
+
+            {{#hasValidation}}
+                {{#maxLength}}
+            if ({{paramName}}.Length > {{maxLength}})
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be less than or equal to `{{maxLength}}`");
+                {{/maxLength}}
+                {{#minLength}}
+            if ({{paramName}}.Length < {{minLength}})
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be greater than or equal to `{{minLength}}`");
+                {{/minLength}}
+                {{#maximum}}
+            if ({{paramName}} > {{maximum}}) 
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value less than or equal to  `{{maximum}}`");
+                {{/maximum}}
+                {{#minimum}}
+            if ({{paramName}} < {{minimum}}) 
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value greater than or equal to `{{minimum}}`");
+                {{/minimum}}
+                {{#pattern}}
+
+                {{/pattern}}
+            {{/hasValidation}}            
             {{/allParams}}
 
             var localVarPath = "{{path}}";
@@ -332,32 +333,32 @@ namespace {{packageName}}.Api
         public async System.Threading.Tasks.Task<ApiResponse<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Object{{/returnType}}>> {{operationId}}AsyncWithHttpInfo ({{#allParams}}{{{dataType}}} {{paramName}}{{^required}}{{#optionalMethodArgument}} = null{{/optionalMethodArgument}}{{/required}}{{#hasMore}}, {{/hasMore}}{{/allParams}})
         {
             {{#allParams}}
-            {{#hasValidation}}
-                {{#maxLength}}
-                    if ({{paramName}}.HasValue && {{paramName}}.Length > {{maxLength}})
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be less than or equal to `{{maxLength}}`");
-                {{/maxLength}}
-                {{#minLength}}
-                    if ({{paramName}}.HasValue && {{paramName}}.Length < {{minLength}})
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be greater than or equal to `{{minLength}}`");
-                {{/minLength}}
-                {{#maximum}}
-                    if ({{paramName}}.HasValue && {{paramName}} > {{maximum}}) 
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value less than or equal to  `{{maximum}}`");
-                {{/maximum}}
-                {{#minimum}}
-                    if ({{paramName}}.HasValue && {{paramName}} < {{minimum}}) 
-                        throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value greater than or equal to `{{minimum}}`");
-                {{/minimum}}
-                {{#pattern}}
-
-                {{/pattern}}
-            {{/hasValidation}}
             {{#required}}
             // verify the required parameter '{{paramName}}' is set
             if ({{paramName}} == null)
                 throw new ApiException(400, "Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}");
             {{/required}}
+            {{#hasValidation}}
+                {{#maxLength}}
+            if ({{paramName}}.Length > {{maxLength}})
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be less than or equal to `{{maxLength}}`");
+                {{/maxLength}}
+                {{#minLength}}
+            if ({{paramName}}.Length < {{minLength}})
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, length must be greater than or equal to `{{minLength}}`");
+                {{/minLength}}
+                {{#maximum}}
+            if ({{paramName}} > {{maximum}}) 
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value less than or equal to  `{{maximum}}`");
+                {{/maximum}}
+                {{#minimum}}
+            if ({{paramName}} < {{minimum}}) 
+                throw new ApiException(400, "Invalid value for parameter `{{paramName}}` when calling `{{operationId}}`, must be a value greater than or equal to `{{minimum}}`");
+                {{/minimum}}
+                {{#pattern}}
+
+                {{/pattern}}
+            {{/hasValidation}}            
             {{/allParams}}
 
             var localVarPath = "{{path}}";

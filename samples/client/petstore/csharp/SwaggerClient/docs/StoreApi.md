@@ -11,7 +11,7 @@ Method | HTTP request | Description
 
 
 # **DeleteOrder**
-> void DeleteOrder (string orderId)
+> void DeleteOrder (int? orderId)
 
 Delete purchase order by ID
 
@@ -33,7 +33,7 @@ namespace Example
         {
             
             var apiInstance = new StoreApi();
-            var orderId = orderId_example;  // string | ID of the order that needs to be deleted
+            var orderId = 56;  // int? | ID of the order that needs to be deleted
 
             try
             {
@@ -53,7 +53,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **orderId** | **string**| ID of the order that needs to be deleted | 
+ **orderId** | **int?**| ID of the order that needs to be deleted | 
 
 ### Return type
 

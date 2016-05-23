@@ -485,6 +485,7 @@ namespace IO.Swagger.Api
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling PetApi->AddPet");
 
+
             var localVarPath = "/pet";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -656,6 +657,8 @@ namespace IO.Swagger.Api
             if (petId == null)
                 throw new ApiException(400, "Missing required parameter 'petId' when calling PetApi->DeletePet");
 
+
+
             var localVarPath = "/pet/{petId}";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -812,6 +815,7 @@ namespace IO.Swagger.Api
             if (status == null)
                 throw new ApiException(400, "Missing required parameter 'status' when calling PetApi->FindPetsByStatus");
 
+
             var localVarPath = "/pet/findByStatus";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -964,6 +968,7 @@ namespace IO.Swagger.Api
             // verify the required parameter 'tags' is set
             if (tags == null)
                 throw new ApiException(400, "Missing required parameter 'tags' when calling PetApi->FindPetsByTags");
+
 
             var localVarPath = "/pet/findByTags";
             var localVarPathParams = new Dictionary<String, String>();
@@ -1118,6 +1123,7 @@ namespace IO.Swagger.Api
             if (petId == null)
                 throw new ApiException(400, "Missing required parameter 'petId' when calling PetApi->GetPetById");
 
+
             var localVarPath = "/pet/{petId}";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -1268,6 +1274,7 @@ namespace IO.Swagger.Api
             // verify the required parameter 'body' is set
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling PetApi->UpdatePet");
+
 
             var localVarPath = "/pet";
             var localVarPathParams = new Dictionary<String, String>();
@@ -1442,6 +1449,9 @@ namespace IO.Swagger.Api
             if (petId == null)
                 throw new ApiException(400, "Missing required parameter 'petId' when calling PetApi->UpdatePetWithForm");
 
+
+
+
             var localVarPath = "/pet/{petId}";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new Dictionary<String, String>();
@@ -1607,6 +1617,9 @@ namespace IO.Swagger.Api
             // verify the required parameter 'petId' is set
             if (petId == null)
                 throw new ApiException(400, "Missing required parameter 'petId' when calling PetApi->UploadFile");
+
+
+
 
             var localVarPath = "/pet/{petId}/uploadImage";
             var localVarPathParams = new Dictionary<String, String>();

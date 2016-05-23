@@ -232,41 +232,53 @@ namespace IO.Swagger.Api
         /// <returns>ApiResponse of Object(void)</returns>
         public ApiResponse<Object> TestEndpointParametersWithHttpInfo (double? number, double? _double, string _string, byte[] _byte, int? integer = null, int? int32 = null, long? int64 = null, float? _float = null, byte[] binary = null, DateTime? date = null, DateTime? dateTime = null, string password = null)
         {
-                    if (number.HasValue && number > 543.2) 
-                        throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value less than or equal to  `543.2`");
-                    if (number.HasValue && number < 32.1) 
-                        throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value greater than or equal to `32.1`");
             // verify the required parameter 'number' is set
             if (number == null)
                 throw new ApiException(400, "Missing required parameter 'number' when calling FakeApi->TestEndpointParameters");
-                    if (_double.HasValue && _double > 123.4) 
-                        throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value less than or equal to  `123.4`");
-                    if (_double.HasValue && _double < 67.8) 
-                        throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value greater than or equal to `67.8`");
+
+            if (number > 543.2) 
+                throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value less than or equal to  `543.2`");
+            if (number < 32.1) 
+                throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value greater than or equal to `32.1`");
             // verify the required parameter '_double' is set
             if (_double == null)
                 throw new ApiException(400, "Missing required parameter '_double' when calling FakeApi->TestEndpointParameters");
 
+            if (_double > 123.4) 
+                throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value less than or equal to  `123.4`");
+            if (_double < 67.8) 
+                throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value greater than or equal to `67.8`");
             // verify the required parameter '_string' is set
             if (_string == null)
                 throw new ApiException(400, "Missing required parameter '_string' when calling FakeApi->TestEndpointParameters");
+
+
             // verify the required parameter '_byte' is set
             if (_byte == null)
                 throw new ApiException(400, "Missing required parameter '_byte' when calling FakeApi->TestEndpointParameters");
-                    if (integer.HasValue && integer > 100.0) 
-                        throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value less than or equal to  `100.0`");
-                    if (integer.HasValue && integer < 10.0) 
-                        throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value greater than or equal to `10.0`");
-                    if (int32.HasValue && int32 > 200.0) 
-                        throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value less than or equal to  `200.0`");
-                    if (int32.HasValue && int32 < 20.0) 
-                        throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value greater than or equal to `20.0`");
-                    if (_float.HasValue && _float > 987.6) 
-                        throw new ApiException(400, "Invalid value for parameter `_float` when calling `TestEndpointParameters`, must be a value less than or equal to  `987.6`");
-                    if (password.HasValue && password.Length > 64)
-                        throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be less than or equal to `64`");
-                    if (password.HasValue && password.Length < 10)
-                        throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be greater than or equal to `10`");
+
+
+            if (integer > 100.0) 
+                throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value less than or equal to  `100.0`");
+            if (integer < 10.0) 
+                throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value greater than or equal to `10.0`");
+
+            if (int32 > 200.0) 
+                throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value less than or equal to  `200.0`");
+            if (int32 < 20.0) 
+                throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value greater than or equal to `20.0`");
+
+
+            if (_float > 987.6) 
+                throw new ApiException(400, "Invalid value for parameter `_float` when calling `TestEndpointParameters`, must be a value less than or equal to  `987.6`");
+
+
+
+
+            if (password.Length > 64)
+                throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be less than or equal to `64`");
+            if (password.Length < 10)
+                throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be greater than or equal to `10`");
 
             var localVarPath = "/fake";
             var localVarPathParams = new Dictionary<String, String>();
@@ -369,41 +381,41 @@ namespace IO.Swagger.Api
         /// <returns>Task of ApiResponse</returns>
         public async System.Threading.Tasks.Task<ApiResponse<Object>> TestEndpointParametersAsyncWithHttpInfo (double? number, double? _double, string _string, byte[] _byte, int? integer = null, int? int32 = null, long? int64 = null, float? _float = null, byte[] binary = null, DateTime? date = null, DateTime? dateTime = null, string password = null)
         {
-                    if (number.HasValue && number > 543.2) 
-                        throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value less than or equal to  `543.2`");
-                    if (number.HasValue && number < 32.1) 
-                        throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value greater than or equal to `32.1`");
             // verify the required parameter 'number' is set
             if (number == null)
                 throw new ApiException(400, "Missing required parameter 'number' when calling FakeApi->TestEndpointParameters");
-                    if (_double.HasValue && _double > 123.4) 
-                        throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value less than or equal to  `123.4`");
-                    if (_double.HasValue && _double < 67.8) 
-                        throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value greater than or equal to `67.8`");
+            if (number > 543.2) 
+                throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value less than or equal to  `543.2`");
+            if (number < 32.1) 
+                throw new ApiException(400, "Invalid value for parameter `number` when calling `TestEndpointParameters`, must be a value greater than or equal to `32.1`");
             // verify the required parameter '_double' is set
             if (_double == null)
                 throw new ApiException(400, "Missing required parameter '_double' when calling FakeApi->TestEndpointParameters");
-
+            if (_double > 123.4) 
+                throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value less than or equal to  `123.4`");
+            if (_double < 67.8) 
+                throw new ApiException(400, "Invalid value for parameter `_double` when calling `TestEndpointParameters`, must be a value greater than or equal to `67.8`");
             // verify the required parameter '_string' is set
             if (_string == null)
                 throw new ApiException(400, "Missing required parameter '_string' when calling FakeApi->TestEndpointParameters");
+
             // verify the required parameter '_byte' is set
             if (_byte == null)
                 throw new ApiException(400, "Missing required parameter '_byte' when calling FakeApi->TestEndpointParameters");
-                    if (integer.HasValue && integer > 100.0) 
-                        throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value less than or equal to  `100.0`");
-                    if (integer.HasValue && integer < 10.0) 
-                        throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value greater than or equal to `10.0`");
-                    if (int32.HasValue && int32 > 200.0) 
-                        throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value less than or equal to  `200.0`");
-                    if (int32.HasValue && int32 < 20.0) 
-                        throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value greater than or equal to `20.0`");
-                    if (_float.HasValue && _float > 987.6) 
-                        throw new ApiException(400, "Invalid value for parameter `_float` when calling `TestEndpointParameters`, must be a value less than or equal to  `987.6`");
-                    if (password.HasValue && password.Length > 64)
-                        throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be less than or equal to `64`");
-                    if (password.HasValue && password.Length < 10)
-                        throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be greater than or equal to `10`");
+            if (integer > 100.0) 
+                throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value less than or equal to  `100.0`");
+            if (integer < 10.0) 
+                throw new ApiException(400, "Invalid value for parameter `integer` when calling `TestEndpointParameters`, must be a value greater than or equal to `10.0`");
+            if (int32 > 200.0) 
+                throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value less than or equal to  `200.0`");
+            if (int32 < 20.0) 
+                throw new ApiException(400, "Invalid value for parameter `int32` when calling `TestEndpointParameters`, must be a value greater than or equal to `20.0`");
+            if (_float > 987.6) 
+                throw new ApiException(400, "Invalid value for parameter `_float` when calling `TestEndpointParameters`, must be a value less than or equal to  `987.6`");
+            if (password.Length > 64)
+                throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be less than or equal to `64`");
+            if (password.Length < 10)
+                throw new ApiException(400, "Invalid value for parameter `password` when calling `TestEndpointParameters`, length must be greater than or equal to `10`");
 
             var localVarPath = "/fake";
             var localVarPathParams = new Dictionary<String, String>();

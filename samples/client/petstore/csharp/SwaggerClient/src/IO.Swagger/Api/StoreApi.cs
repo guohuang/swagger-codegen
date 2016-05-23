@@ -23,7 +23,7 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns></returns>
-        void DeleteOrder (string orderId);
+        void DeleteOrder (int? orderId);
 
         /// <summary>
         /// Delete purchase order by ID
@@ -34,7 +34,7 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns>ApiResponse of Object(void)</returns>
-        ApiResponse<Object> DeleteOrderWithHttpInfo (string orderId);
+        ApiResponse<Object> DeleteOrderWithHttpInfo (int? orderId);
         /// <summary>
         /// Returns pet inventories by status
         /// </summary>
@@ -107,7 +107,7 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns>Task of void</returns>
-        System.Threading.Tasks.Task DeleteOrderAsync (string orderId);
+        System.Threading.Tasks.Task DeleteOrderAsync (int? orderId);
 
         /// <summary>
         /// Delete purchase order by ID
@@ -118,7 +118,7 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns>Task of ApiResponse</returns>
-        System.Threading.Tasks.Task<ApiResponse<Object>> DeleteOrderAsyncWithHttpInfo (string orderId);
+        System.Threading.Tasks.Task<ApiResponse<Object>> DeleteOrderAsyncWithHttpInfo (int? orderId);
         /// <summary>
         /// Returns pet inventories by status
         /// </summary>
@@ -276,7 +276,7 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns></returns>
-        public void DeleteOrder (string orderId)
+        public void DeleteOrder (int? orderId)
         {
              DeleteOrderWithHttpInfo(orderId);
         }
@@ -287,13 +287,14 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns>ApiResponse of Object(void)</returns>
-        public ApiResponse<Object> DeleteOrderWithHttpInfo (string orderId)
+        public ApiResponse<Object> DeleteOrderWithHttpInfo (int? orderId)
         {
-                    if (orderId.HasValue && orderId < 1.0) 
-                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `DeleteOrder`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->DeleteOrder");
+
+            if (orderId < 1.0) 
+                throw new ApiException(400, "Invalid value for parameter `orderId` when calling `DeleteOrder`, must be a value greater than or equal to `1.0`");
 
             var localVarPath = "/store/order/{orderId}";
             var localVarPathParams = new Dictionary<String, String>();
@@ -347,7 +348,7 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns>Task of void</returns>
-        public async System.Threading.Tasks.Task DeleteOrderAsync (string orderId)
+        public async System.Threading.Tasks.Task DeleteOrderAsync (int? orderId)
         {
              await DeleteOrderAsyncWithHttpInfo(orderId);
 
@@ -359,13 +360,13 @@ namespace IO.Swagger.Api
         /// <exception cref="IO.Swagger.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="orderId">ID of the order that needs to be deleted</param>
         /// <returns>Task of ApiResponse</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<Object>> DeleteOrderAsyncWithHttpInfo (string orderId)
+        public async System.Threading.Tasks.Task<ApiResponse<Object>> DeleteOrderAsyncWithHttpInfo (int? orderId)
         {
-                    if (orderId.HasValue && orderId < 1.0) 
-                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `DeleteOrder`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->DeleteOrder");
+            if (orderId < 1.0) 
+                throw new ApiException(400, "Invalid value for parameter `orderId` when calling `DeleteOrder`, must be a value greater than or equal to `1.0`");
 
             var localVarPath = "/store/order/{orderId}";
             var localVarPathParams = new Dictionary<String, String>();
@@ -571,13 +572,14 @@ namespace IO.Swagger.Api
         /// <returns>ApiResponse of Order</returns>
         public ApiResponse< Order > GetOrderByIdWithHttpInfo (long? orderId)
         {
-                    if (orderId.HasValue && orderId > 5.0) 
-                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value less than or equal to  `5.0`");
-                    if (orderId.HasValue && orderId < 1.0) 
-                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->GetOrderById");
+
+            if (orderId > 5.0) 
+                throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value less than or equal to  `5.0`");
+            if (orderId < 1.0) 
+                throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value greater than or equal to `1.0`");
 
             var localVarPath = "/store/order/{orderId}";
             var localVarPathParams = new Dictionary<String, String>();
@@ -646,13 +648,13 @@ namespace IO.Swagger.Api
         /// <returns>Task of ApiResponse (Order)</returns>
         public async System.Threading.Tasks.Task<ApiResponse<Order>> GetOrderByIdAsyncWithHttpInfo (long? orderId)
         {
-                    if (orderId.HasValue && orderId > 5.0) 
-                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value less than or equal to  `5.0`");
-                    if (orderId.HasValue && orderId < 1.0) 
-                        throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value greater than or equal to `1.0`");
             // verify the required parameter 'orderId' is set
             if (orderId == null)
                 throw new ApiException(400, "Missing required parameter 'orderId' when calling StoreApi->GetOrderById");
+            if (orderId > 5.0) 
+                throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value less than or equal to  `5.0`");
+            if (orderId < 1.0) 
+                throw new ApiException(400, "Invalid value for parameter `orderId` when calling `GetOrderById`, must be a value greater than or equal to `1.0`");
 
             var localVarPath = "/store/order/{orderId}";
             var localVarPathParams = new Dictionary<String, String>();
@@ -723,6 +725,7 @@ namespace IO.Swagger.Api
             // verify the required parameter 'body' is set
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling StoreApi->PlaceOrder");
+
 
             var localVarPath = "/store/order";
             var localVarPathParams = new Dictionary<String, String>();
