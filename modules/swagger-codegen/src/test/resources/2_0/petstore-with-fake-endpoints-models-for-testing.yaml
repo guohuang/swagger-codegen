@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  description: 'This spec is mainly for testing Petstore server and contains fake endpoints, models. Please do not use this for any other purpose.'
+  description: 'This spec is mainly for testing Petstore server and contains fake endpoints, models. Please do not use this for any other purpose. Special characters: " \ '
   version: 1.0.0
   title: Swagger Petstore
   termsOfService: 'http://swagger.io/terms/'
@@ -559,6 +559,108 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+
+  /fake:
+    post:
+      tags:
+        - fake 
+      summary: |
+        Fake endpoint for testing various parameters
+        假端點
+        偽のエンドポイント
+        가짜 엔드 포인트
+      description: |
+        Fake endpoint for testing various parameters
+        假端點
+        偽のエンドポイント
+        가짜 엔드 포인트
+      operationId: testEndpointParameters
+      consumes:
+        - application/xml; charset=utf-8
+        - application/json; charset=utf-8
+      produces:
+        - application/xml; charset=utf-8
+        - application/json; charset=utf-8
+      parameters:
+        - name: integer
+          type: integer
+          maximum: 100
+          minimum: 10
+          in: formData
+          description: None
+        - name: int32
+          type: integer
+          format: int32
+          maximum: 200
+          minimum: 20
+          in: formData
+          description: None
+        - name: int64
+          type: integer
+          format: int64
+          in: formData
+          description: None
+        - name: number
+          type: number
+          maximum: 543.2
+          minimum: 32.1
+          in: formData
+          description: None
+          required: true
+        - name: float
+          type: number
+          format: float
+          maximum: 987.6
+          in: formData
+          description: None
+        - name: double
+          type: number
+          in: formData
+          format: double
+          maximum: 123.4
+          minimum: 67.8
+          required: true
+          description: None
+        - name: string
+          type: string
+          pattern: /[a-z]/i
+          in: formData
+          description: None
+          required: true
+        - name: byte
+          type: string
+          format: byte
+          in: formData
+          description: None
+          required: true
+        - name: binary
+          type: string
+          format: binary
+          in: formData
+          description: None
+        - name: date
+          type: string
+          format: date
+          in: formData
+          description: None
+        - name: dateTime
+          type: string
+          format: date-time
+          in: formData
+          description: None
+        - name: password
+          type: string
+          format: password
+          maxLength: 64
+          minLength: 10
+          in: formData
+          description: None
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+
 securityDefinitions:
   petstore_auth:
     type: oauth2
@@ -615,6 +717,7 @@ definitions:
       id:
         type: integer
         format: int64
+        x-is-unique: true
       username:
         type: string
       firstName:
@@ -652,6 +755,7 @@ definitions:
       id:
         type: integer
         format: int64
+        x-is-unique: true
       category:
         $ref: '#/definitions/Category'
       name:
@@ -719,6 +823,9 @@ definitions:
         format: int32
       property:
         type: string
+      123Number:
+        type: integer
+        readOnly: true
     xml:
       name: Name
   200_response:
@@ -751,29 +858,50 @@ definitions:
     properties:
       className:
         type: string
+      color:
+        type: string
+        default: 'red'
+  AnimalFarm:
+    type: array
+    items:
+      $ref: '#/definitions/Animal'
   format_test:
     type: object
     required:
       - number
+      - byte
+      - date
+      - password
     properties:
       integer:
         type: integer
+        maximum: 100
+        minimum: 10
       int32:
         type: integer
         format: int32
+        maximum: 200
+        minimum: 20
       int64:
         type: integer
         format: int64
       number:
+        maximum: 543.2
+        minimum: 32.1
         type: number
       float:
         type: number
         format: float
+        maximum: 987.6
+        minimum: 54.3
       double:
         type: number
         format: double
+        maximum: 123.4
+        minimum: 67.8
       string:
         type: string
+        pattern: /[a-z]/i
       byte:
         type: string
         format: byte
@@ -786,9 +914,95 @@ definitions:
       dateTime:
         type: string
         format: date-time
+      uuid:
+        type: string
+        format: uuid 
       password:
         type: string
         format: password
+        maxLength: 64
+        minLength: 10
+  EnumClass:
+    type: string
+    default: '-efg'
+    enum:
+      - _abc
+      - '-efg'
+      - (xyz)
+  Enum_Test:
+    type: object
+    properties:
+      enum_string:
+        type: string
+        enum:
+          - UPPER
+          - lower
+      enum_integer:
+        type: integer
+        format: int32
+        enum:
+          - 1
+          - -1
+      enum_number:
+        type: number
+        format: double
+        enum:
+          - 1.1
+          - -1.2
+  AdditionalPropertiesClass:
+    type: object
+    properties:
+      map_property:
+        type: object
+        additionalProperties:
+          type: string
+      map_of_map_property:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            type: string
+  MixedPropertiesAndAdditionalPropertiesClass:
+    type: object
+    properties:
+      uuid:
+        type: string
+        format: uuid
+      dateTime:
+        type: string
+        format: date-time
+      map: 
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Animal'
+  ReadOnlyFirst:
+    type: object
+    properties:
+      bar:
+        type: string
+        readOnly: true
+      baz:
+        type: string
+  ArrayTest:
+    type: object
+    properties:
+      array_of_string:
+        type: array
+        items:
+          type: string
+      array_array_of_integer:
+        type: array
+        items:
+          type: array
+          items:
+            type: integer
+            format: int64
+      array_array_of_model:
+        type: array
+        items:
+          type: array
+          items:
+            $ref: '#/definitions/ReadOnlyFirst'
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'

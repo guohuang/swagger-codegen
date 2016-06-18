@@ -13,7 +13,7 @@ exports.deletePet = function(args, res, next) {
   /**
    * parameters expected in the args:
   * petId (Long)
-  * apiKey (String)
+  * api_key (String)
   **/
   // no response value expected for this operation
   res.end();

@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +67,6 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
 
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
         apiDocTemplateFiles.put("api_doc.mustache", ".md");
-
-        // C# client default
-        setSourceFolder("src" + File.separator + "main" + File.separator + "csharp");
 
         cliOptions.clear();
 
@@ -140,10 +137,15 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
     @Override
     public void processOpts() {
         super.processOpts();
+        Boolean excludeTests = false;
 
-        apiPackage = packageName + ".Api";
-        modelPackage = packageName + ".Model";
-        clientPackage = packageName + ".Client";
+        if(additionalProperties.containsKey(CodegenConstants.EXCLUDE_TESTS)) {
+            excludeTests = Boolean.valueOf(additionalProperties.get(CodegenConstants.EXCLUDE_TESTS).toString());
+        }
+
+        apiPackage = "Api";
+        modelPackage = "Model";
+        clientPackage = "Client";
 
         additionalProperties.put("clientPackage", clientPackage);
 
@@ -157,6 +159,10 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
 
         if (additionalProperties.containsKey(CodegenConstants.DOTNET_FRAMEWORK)) {
             setTargetFramework((String) additionalProperties.get(CodegenConstants.DOTNET_FRAMEWORK));
+        } else {
+            // Ensure default is set.
+            setTargetFramework(NET45);
+            additionalProperties.put("targetFramework", this.targetFramework);
         }
 
         if (NET35.equals(this.targetFramework)) {
@@ -201,8 +207,12 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
                     .get(CodegenConstants.OPTIONAL_ASSEMBLY_INFO).toString()));
         }
 
-        String packageFolder = sourceFolder + File.separator + packageName.replace(".", java.io.File.separator);
-        String clientPackageDir = sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator);
+        final String testPackageName = testPackageName();
+        String packageFolder = sourceFolder + File.separator + packageName;
+        String clientPackageDir = packageFolder + File.separator + clientPackage;
+        String testPackageFolder = testFolder + File.separator + testPackageName;
+
+        additionalProperties.put("testPackageName", testPackageName);
 
         //Compute the relative path to the bin directory where the external assemblies live
         //This is necessary to properly generate the project file
@@ -210,9 +220,11 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
         String binRelativePath = "..\\";
         for (int i = 0; i < packageDepth; i = i + 1)
             binRelativePath += "..\\";
-        binRelativePath += "vendor\\";
+        binRelativePath += "vendor";
         additionalProperties.put("binRelativePath", binRelativePath);
 
+        supportingFiles.add(new SupportingFile("IApiAccessor.mustache",
+                clientPackageDir, "IApiAccessor.cs"));
         supportingFiles.add(new SupportingFile("Configuration.mustache",
                 clientPackageDir, "Configuration.cs"));
         supportingFiles.add(new SupportingFile("ApiClient.mustache",
@@ -221,19 +233,40 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
                 clientPackageDir, "ApiException.cs"));
         supportingFiles.add(new SupportingFile("ApiResponse.mustache",
                 clientPackageDir, "ApiResponse.cs"));
+        supportingFiles.add(new SupportingFile("ExceptionFactory.mustache",
+                clientPackageDir, "ExceptionFactory.cs"));
 
-        supportingFiles.add(new SupportingFile("compile.mustache", "", "compile.bat"));
-        supportingFiles.add(new SupportingFile("compile-mono.sh.mustache", "", "compile-mono.sh"));
-        supportingFiles.add(new SupportingFile("packages.config.mustache", "vendor" + java.io.File.separator, "packages.config"));
+        supportingFiles.add(new SupportingFile("compile.mustache", "", "build.bat"));
+        supportingFiles.add(new SupportingFile("compile-mono.sh.mustache", "", "build.sh"));
+        // shell script to run the nunit test
+        supportingFiles.add(new SupportingFile("mono_nunit_test.mustache", "", "mono_nunit_test.sh"));
+
+        // copy package.config to nuget's standard location for project-level installs
+        supportingFiles.add(new SupportingFile("packages.config.mustache", packageFolder + File.separator, "packages.config"));
+        // .travis.yml for travis-ci.org CI
+        supportingFiles.add(new SupportingFile("travis.mustache", "", ".travis.yml"));
+
+        if(Boolean.FALSE.equals(excludeTests)) {
+            supportingFiles.add(new SupportingFile("packages_test.config.mustache", testPackageFolder + File.separator, "packages.config"));
+        }
+
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
         supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
         supportingFiles.add(new SupportingFile("gitignore.mustache", "", ".gitignore"));
+        // apache v2 license
+        // UPDATE (20160612) no longer needed as the Apache v2 LICENSE is added globally
+        //supportingFiles.add(new SupportingFile("LICENSE", "", "LICENSE"));
 
         if (optionalAssemblyInfoFlag) {
             supportingFiles.add(new SupportingFile("AssemblyInfo.mustache", packageFolder + File.separator + "Properties", "AssemblyInfo.cs"));
         }
         if (optionalProjectFileFlag) {
-            supportingFiles.add(new SupportingFile("Project.mustache", packageFolder, clientPackage + ".csproj"));
+            supportingFiles.add(new SupportingFile("Solution.mustache", "", packageName + ".sln"));
+            supportingFiles.add(new SupportingFile("Project.mustache", packageFolder, packageName + ".csproj"));
+
+            if(Boolean.FALSE.equals(excludeTests)) {
+                supportingFiles.add(new SupportingFile("TestProject.mustache", testPackageFolder, testPackageName + ".csproj"));
+            }
         }
 
         additionalProperties.put("apiDocPath", apiDocPath);
@@ -308,75 +341,7 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
 
     @Override
     public Map<String, Object> postProcessModels(Map<String, Object> objMap) {
-        Map<String, Object> objs = super.postProcessModels(objMap);
-
-        List<Object> models = (List<Object>) objs.get("models");
-        for (Object _mo : models) {
-            Map<String, Object> mo = (Map<String, Object>) _mo;
-            CodegenModel cm = (CodegenModel) mo.get("model");
-            for (CodegenProperty var : cm.vars) {
-                Map<String, Object> allowableValues = var.allowableValues;
-
-                // handle ArrayProperty
-                if (var.items != null) {
-                    allowableValues = var.items.allowableValues;
-                }
-
-                if (allowableValues == null) {
-                    continue;
-                }
-                List<String> values = (List<String>) allowableValues.get("values");
-                if (values == null) {
-                    continue;
-                }
-
-                // put "enumVars" map into `allowableValues", including `name` and `value`
-                List<Map<String, String>> enumVars = new ArrayList<Map<String, String>>();
-                String commonPrefix = findCommonPrefixOfVars(values);
-                int truncateIdx = commonPrefix.length();
-                for (String value : values) {
-                    Map<String, String> enumVar = new HashMap<String, String>();
-                    String enumName;
-                    if (truncateIdx == 0) {
-                        enumName = value;
-                    } else {
-                        enumName = value.substring(truncateIdx);
-                        if ("".equals(enumName)) {
-                            enumName = value;
-                        }
-                    }
-                    enumVar.put("name", toEnumVarName(enumName));
-                    enumVar.put("jsonname", value);
-                    enumVar.put("value", value);
-                    enumVars.add(enumVar);
-                }
-                allowableValues.put("enumVars", enumVars);
-                // handle default value for enum, e.g. available => StatusEnum.AVAILABLE
-
-                // HACK: strip ? from enum
-                if (var.datatypeWithEnum != null) {
-                    var.vendorExtensions.put(DATA_TYPE_WITH_ENUM_EXTENSION, var.datatypeWithEnum.substring(0, var.datatypeWithEnum.length() - 1));
-                }
-
-                if (var.defaultValue != null) {
-                    String enumName = null;
-
-                    for (Map<String, String> enumVar : enumVars) {
-
-                        if (var.defaultValue.replace("\"", "").equals(enumVar.get("value"))) {
-                            enumName = enumVar.get("name");
-                            break;
-                        }
-                    }
-                    if (enumName != null && var.vendorExtensions.containsKey(DATA_TYPE_WITH_ENUM_EXTENSION)) {
-                        var.defaultValue = var.vendorExtensions.get(DATA_TYPE_WITH_ENUM_EXTENSION) + "." + enumName;
-                    }
-                }
-
-            }
-        }
-
-        return objs;
+    	return super.postProcessModels(objMap);
     }
 
     public void setTargetFramework(String dotnetFramework) {
@@ -436,17 +401,33 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
         return codegenModel;
     }
 
-    private String findCommonPrefixOfVars(List<String> vars) {
-        String prefix = StringUtils.getCommonPrefix(vars.toArray(new String[vars.size()]));
-        // exclude trailing characters that should be part of a valid variable
-        // e.g. ["status-on", "status-off"] => "status-" (not "status-o")
-        return prefix.replaceAll("[a-zA-Z0-9]+\\z", "");
+    @Override
+    public String toEnumValue(String value, String datatype) {
+        if ("int?".equalsIgnoreCase(datatype) || "long?".equalsIgnoreCase(datatype) ||
+            "double?".equalsIgnoreCase(datatype) || "float?".equalsIgnoreCase(datatype)) {
+            return value;
+        } else {
+            return "\"" + escapeText(value) + "\"";
+        }
     }
 
-    private String toEnumVarName(String value) {
+    @Override
+    public String toEnumVarName(String value, String datatype) {
+        // number
+        if ("int?".equals(datatype) || "long?".equals(datatype) || 
+            "double?".equals(datatype) || "float?".equals(datatype)) {
+            String varName = "NUMBER_" + value;
+            varName = varName.replaceAll("-", "MINUS_");
+            varName = varName.replaceAll("\\+", "PLUS_");
+            varName = varName.replaceAll("\\.", "_DOT_");
+            return varName;
+        }
+
+        // string
         String var = value.replaceAll("_", " ");
         var = WordUtils.capitalizeFully(var);
         var = var.replaceAll("\\W+", "");
+
 
         if (var.matches("\\d.*")) {
             return "_" + var;
@@ -491,4 +472,13 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
         return (outputFolder + "/" + modelDocPath).replace('/', File.separatorChar);
     }
 
+    @Override
+    public String apiTestFileFolder() {
+        return outputFolder + File.separator + testFolder + File.separator + testPackageName() + File.separator + apiPackage();
+    }
+
+    @Override
+    public String modelTestFileFolder() {
+        return outputFolder + File.separator + testFolder + File.separator + testPackageName() + File.separator + modelPackage();
+    }
 }
