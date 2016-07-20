@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +39,6 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
     private static final String DATA_TYPE_WITH_ENUM_EXTENSION = "plainDatatypeWithEnum";
 
     protected String packageGuid = "{" + java.util.UUID.randomUUID().toString().toUpperCase() + "}";
-    protected String packageTitle = "Swagger Library";
-    protected String packageProductName = "SwaggerLibrary";
-    protected String packageDescription = "A library generated from a Swagger doc";
-    protected String packageCompany = "Swagger";
-    protected String packageCopyright = "No Copyright";
     protected String clientPackage = "IO.Swagger.Client";
     protected String localVariablePrefix = "";
     protected String apiDocPath = "docs/";
@@ -67,9 +62,6 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
 
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
         apiDocTemplateFiles.put("api_doc.mustache", ".md");
-
-        // C# client default
-        setSourceFolder("src" + File.separator + "main" + File.separator + "csharp");
 
         cliOptions.clear();
 
@@ -140,23 +132,26 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
     @Override
     public void processOpts() {
         super.processOpts();
+        Boolean excludeTests = false;
 
-        apiPackage = packageName + ".Api";
-        modelPackage = packageName + ".Model";
-        clientPackage = packageName + ".Client";
+        if(additionalProperties.containsKey(CodegenConstants.EXCLUDE_TESTS)) {
+            excludeTests = Boolean.valueOf(additionalProperties.get(CodegenConstants.EXCLUDE_TESTS).toString());
+        }
+
+        apiPackage = "Api";
+        modelPackage = "Model";
+        clientPackage = "Client";
 
         additionalProperties.put("clientPackage", clientPackage);
 
-        // Add properties used by AssemblyInfo.mustache
-        additionalProperties.put("packageTitle", packageTitle);
-        additionalProperties.put("packageProductName", packageProductName);
-        additionalProperties.put("packageDescription", packageDescription);
-        additionalProperties.put("packageCompany", packageCompany);
-        additionalProperties.put("packageCopyright", packageCopyright);
         additionalProperties.put("emitDefaultValue", optionalEmitDefaultValue);
 
         if (additionalProperties.containsKey(CodegenConstants.DOTNET_FRAMEWORK)) {
             setTargetFramework((String) additionalProperties.get(CodegenConstants.DOTNET_FRAMEWORK));
+        } else {
+            // Ensure default is set.
+            setTargetFramework(NET45);
+            additionalProperties.put("targetFramework", this.targetFramework);
         }
 
         if (NET35.equals(this.targetFramework)) {
@@ -201,8 +196,12 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
                     .get(CodegenConstants.OPTIONAL_ASSEMBLY_INFO).toString()));
         }
 
-        String packageFolder = sourceFolder + File.separator + packageName.replace(".", java.io.File.separator);
-        String clientPackageDir = sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator);
+        final String testPackageName = testPackageName();
+        String packageFolder = sourceFolder + File.separator + packageName;
+        String clientPackageDir = packageFolder + File.separator + clientPackage;
+        String testPackageFolder = testFolder + File.separator + testPackageName;
+
+        additionalProperties.put("testPackageName", testPackageName);
 
         //Compute the relative path to the bin directory where the external assemblies live
         //This is necessary to properly generate the project file
@@ -210,9 +209,11 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
         String binRelativePath = "..\\";
         for (int i = 0; i < packageDepth; i = i + 1)
             binRelativePath += "..\\";
-        binRelativePath += "vendor\\";
+        binRelativePath += "vendor";
         additionalProperties.put("binRelativePath", binRelativePath);
 
+        supportingFiles.add(new SupportingFile("IApiAccessor.mustache",
+                clientPackageDir, "IApiAccessor.cs"));
         supportingFiles.add(new SupportingFile("Configuration.mustache",
                 clientPackageDir, "Configuration.cs"));
         supportingFiles.add(new SupportingFile("ApiClient.mustache",
@@ -221,19 +222,40 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
                 clientPackageDir, "ApiException.cs"));
         supportingFiles.add(new SupportingFile("ApiResponse.mustache",
                 clientPackageDir, "ApiResponse.cs"));
+        supportingFiles.add(new SupportingFile("ExceptionFactory.mustache",
+                clientPackageDir, "ExceptionFactory.cs"));
 
-        supportingFiles.add(new SupportingFile("compile.mustache", "", "compile.bat"));
-        supportingFiles.add(new SupportingFile("compile-mono.sh.mustache", "", "compile-mono.sh"));
-        supportingFiles.add(new SupportingFile("packages.config.mustache", "vendor" + java.io.File.separator, "packages.config"));
+        supportingFiles.add(new SupportingFile("compile.mustache", "", "build.bat"));
+        supportingFiles.add(new SupportingFile("compile-mono.sh.mustache", "", "build.sh"));
+        // shell script to run the nunit test
+        supportingFiles.add(new SupportingFile("mono_nunit_test.mustache", "", "mono_nunit_test.sh"));
+
+        // copy package.config to nuget's standard location for project-level installs
+        supportingFiles.add(new SupportingFile("packages.config.mustache", packageFolder + File.separator, "packages.config"));
+        // .travis.yml for travis-ci.org CI
+        supportingFiles.add(new SupportingFile("travis.mustache", "", ".travis.yml"));
+
+        if(Boolean.FALSE.equals(excludeTests)) {
+            supportingFiles.add(new SupportingFile("packages_test.config.mustache", testPackageFolder + File.separator, "packages.config"));
+        }
+
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
         supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
         supportingFiles.add(new SupportingFile("gitignore.mustache", "", ".gitignore"));
+        // apache v2 license
+        // UPDATE (20160612) no longer needed as the Apache v2 LICENSE is added globally
+        //supportingFiles.add(new SupportingFile("LICENSE", "", "LICENSE"));
 
         if (optionalAssemblyInfoFlag) {
             supportingFiles.add(new SupportingFile("AssemblyInfo.mustache", packageFolder + File.separator + "Properties", "AssemblyInfo.cs"));
         }
         if (optionalProjectFileFlag) {
-            supportingFiles.add(new SupportingFile("Project.mustache", packageFolder, clientPackage + ".csproj"));
+            supportingFiles.add(new SupportingFile("Solution.mustache", "", packageName + ".sln"));
+            supportingFiles.add(new SupportingFile("Project.mustache", packageFolder, packageName + ".csproj"));
+
+            if(Boolean.FALSE.equals(excludeTests)) {
+                supportingFiles.add(new SupportingFile("TestProject.mustache", testPackageFolder, testPackageName + ".csproj"));
+            }
         }
 
         additionalProperties.put("apiDocPath", apiDocPath);
@@ -392,9 +414,9 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
 
         // string
         String var = value.replaceAll("_", " ");
-        var = WordUtils.capitalizeFully(var);
+        //var = WordUtils.capitalizeFully(var);
+        var = camelize(var);
         var = var.replaceAll("\\W+", "");
-
 
         if (var.matches("\\d.*")) {
             return "_" + var;
@@ -439,4 +461,13 @@ public class CSharpClientCodegen extends AbstractCSharpCodegen {
         return (outputFolder + "/" + modelDocPath).replace('/', File.separatorChar);
     }
 
+    @Override
+    public String apiTestFileFolder() {
+        return outputFolder + File.separator + testFolder + File.separator + testPackageName() + File.separator + apiPackage();
+    }
+
+    @Override
+    public String modelTestFileFolder() {
+        return outputFolder + File.separator + testFolder + File.separator + testPackageName() + File.separator + modelPackage();
+    }
 }

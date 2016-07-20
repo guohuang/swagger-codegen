@@ -7,22 +7,14 @@ import io.swagger.models.properties.*;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
-import java.io.File;
 
 public class HaskellServantCodegen extends DefaultCodegen implements CodegenConfig {
 
     // source folder where to write the files
     protected String sourceFolder = "src";
     protected String apiVersion = "0.0.1";
-
-
-    // How to encode special characters like $
-    // They are translated to words like "Dollar" and prefixed with '
-    // Then translated back during JSON encoding and decoding
-    private Map<Character, String> specialCharReplacements = new HashMap<Character, String>();
 
     /**
      * Configures the type of generator.
@@ -57,20 +49,8 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
     public HaskellServantCodegen() {
         super();
 
-        // Initialize special characters
-        specialCharReplacements.put('$', "Dollar");
-        specialCharReplacements.put('^', "Caret");
-        specialCharReplacements.put('|', "Pipe");
-        specialCharReplacements.put('=', "Equal");
-        specialCharReplacements.put('*', "Star");
+        // override the mapping for "-" (Minus) to keep the original mapping in Haskell
         specialCharReplacements.put('-', "Dash");
-        specialCharReplacements.put('&', "Ampersand");
-        specialCharReplacements.put('%', "Percent");
-        specialCharReplacements.put('#', "Hash");
-        specialCharReplacements.put('@', "At");
-        specialCharReplacements.put('!', "Exclamation");
-        specialCharReplacements.put('+', "Plus");
-
 
         // set the output folder here
         outputFolder = "generated-code/haskell-servant";
@@ -450,7 +430,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
             case "pipes": return "(QueryList 'PipeSeparated (" + type + "))";
             case "multi": return "(QueryList 'MultiParamArray (" + type + "))";
             default:
-                throw new NotImplementedException();
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -511,4 +491,16 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
         p.dataType = fixModelChars(p.dataType);
         return p;
     }
+
+    @Override
+    public String escapeQuotationMark(String input) {
+        // remove " to avoid code injection
+        return input.replace("\"", "");
+    }
+
+    @Override
+    public String escapeUnsafeCharacters(String input) {
+        return input.replace("{-", "{_-").replace("-}", "-_}");
+    }
+
 }

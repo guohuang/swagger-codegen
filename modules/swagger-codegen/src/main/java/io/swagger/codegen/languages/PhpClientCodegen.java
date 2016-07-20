@@ -3,6 +3,7 @@ package io.swagger.codegen.languages;
 import io.swagger.codegen.CliOption;
 import io.swagger.codegen.CodegenConfig;
 import io.swagger.codegen.CodegenConstants;
+import io.swagger.codegen.CodegenOperation;
 import io.swagger.codegen.CodegenParameter;
 import io.swagger.codegen.CodegenProperty;
 import io.swagger.codegen.CodegenType;
@@ -13,6 +14,7 @@ import io.swagger.models.properties.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.regex.Matcher;
@@ -32,14 +34,18 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
     public static final String COMPOSER_VENDOR_NAME = "composerVendorName";
     public static final String COMPOSER_PROJECT_NAME = "composerProjectName";
     protected String invokerPackage = "Swagger\\Client";
-    protected String composerVendorName = "swagger";
-    protected String composerProjectName = "swagger-client";
+    protected String composerVendorName = null;
+    protected String composerProjectName = null;
     protected String packagePath = "SwaggerClient-php";
-    protected String artifactVersion = "1.0.0";
+    protected String artifactVersion = null;
     protected String srcBasePath = "lib";
+    protected String testBasePath = "test";
+    protected String docsBasePath = "docs";
+    protected String apiDirName = "Api";
+    protected String modelDirName = "Model";
     protected String variableNamingConvention= "snake_case";
-    protected String apiDocPath = "docs/";
-    protected String modelDocPath = "docs/";
+    protected String apiDocPath = docsBasePath + "/" + apiDirName;
+    protected String modelDocPath = docsBasePath + "/" + modelDirName;
 
     public PhpClientCodegen() {
         super();
@@ -51,9 +57,8 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         modelTestTemplateFiles.put("model_test.mustache", ".php");
         apiTestTemplateFiles.put("api_test.mustache", ".php");
         embeddedTemplateDir = templateDir = "php";
-        apiPackage = invokerPackage + "\\Api";
-        modelPackage = invokerPackage + "\\Model";
-        testPackage = invokerPackage + "\\Tests";
+        apiPackage = invokerPackage + "\\" + apiDirName;
+        modelPackage = invokerPackage + "\\" + modelDirName;
 
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
         apiDocTemplateFiles.put("api_doc.mustache", ".md");
@@ -123,7 +128,9 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         cliOptions.add(new CliOption(PACKAGE_PATH, "The main package name for classes. e.g. GeneratedPetstore"));
         cliOptions.add(new CliOption(SRC_BASE_PATH, "The directory under packagePath to serve as source root."));
         cliOptions.add(new CliOption(COMPOSER_VENDOR_NAME, "The vendor name used in the composer package name. The template uses {{composerVendorName}}/{{composerProjectName}} for the composer package name. e.g. yaypets. IMPORTANT NOTE (2016/03): composerVendorName will be deprecated and replaced by gitUserId in the next swagger-codegen release"));
+        cliOptions.add(new CliOption(CodegenConstants.GIT_USER_ID, CodegenConstants.GIT_USER_ID_DESC));
         cliOptions.add(new CliOption(COMPOSER_PROJECT_NAME, "The project name used in the composer package name. The template uses {{composerVendorName}}/{{composerProjectName}} for the composer package name. e.g. petstore-client. IMPORTANT NOTE (2016/03): composerProjectName will be deprecated and replaced by gitRepoId in the next swagger-codegen release"));
+        cliOptions.add(new CliOption(CodegenConstants.GIT_REPO_ID, CodegenConstants.GIT_REPO_ID_DESC));
         cliOptions.add(new CliOption(CodegenConstants.ARTIFACT_VERSION, "The version to use in the composer package version field. e.g. 1.2.3"));
     }
 
@@ -160,6 +167,15 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
                     .replaceAll(regLastPathSeparator+ "$", "")
                     // replace backslash with system file separator
                     .replace("\\", File.separator);
+    }
+
+    @Override
+    public String escapeText(String input) {
+        if (input != null) {
+            // Trim the string to avoid leading and trailing spaces.
+            return super.escapeText(input).trim();
+        }
+        return input;
     }
 
     @Override
@@ -213,10 +229,22 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
             additionalProperties.put(COMPOSER_PROJECT_NAME, composerProjectName);
         }
 
+        if (additionalProperties.containsKey(CodegenConstants.GIT_USER_ID)) {
+            this.setGitUserId((String) additionalProperties.get(CodegenConstants.GIT_USER_ID));
+        } else {
+            additionalProperties.put(CodegenConstants.GIT_USER_ID, gitUserId);
+        }
+
         if (additionalProperties.containsKey(COMPOSER_VENDOR_NAME)) {
             this.setComposerVendorName((String) additionalProperties.get(COMPOSER_VENDOR_NAME));
         } else {
             additionalProperties.put(COMPOSER_VENDOR_NAME, composerVendorName);
+        }
+
+        if (additionalProperties.containsKey(CodegenConstants.GIT_REPO_ID)) {
+            this.setGitRepoId((String) additionalProperties.get(CodegenConstants.GIT_REPO_ID));
+        } else {
+            additionalProperties.put(CodegenConstants.GIT_REPO_ID, gitRepoId);
         }
 
         if (additionalProperties.containsKey(CodegenConstants.ARTIFACT_VERSION)) {
@@ -235,6 +263,9 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         additionalProperties.put("apiDocPath", apiDocPath);
         additionalProperties.put("modelDocPath", modelDocPath);
 
+        // make test path available in mustache template
+        additionalProperties.put("testBasePath", testBasePath);
+
         supportingFiles.add(new SupportingFile("configuration.mustache", toPackagePath(invokerPackage, srcBasePath), "Configuration.php"));
         supportingFiles.add(new SupportingFile("ApiClient.mustache", toPackagePath(invokerPackage, srcBasePath), "ApiClient.php"));
         supportingFiles.add(new SupportingFile("ApiException.mustache", toPackagePath(invokerPackage, srcBasePath), "ApiException.php"));
@@ -244,7 +275,8 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         supportingFiles.add(new SupportingFile("README.mustache", getPackagePath(), "README.md"));
         supportingFiles.add(new SupportingFile(".travis.yml", getPackagePath(), ".travis.yml"));
         supportingFiles.add(new SupportingFile("git_push.sh.mustache", getPackagePath(), "git_push.sh"));
-
+        // apache v2 license
+        supportingFiles.add(new SupportingFile("LICENSE", getPackagePath(), "LICENSE"));
     }
 
     @Override
@@ -264,23 +296,21 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     @Override
     public String apiTestFileFolder() {
-        return (outputFolder + "/" + toPackagePath(testPackage, srcBasePath));
+        return (outputFolder + "/" + getPackagePath() + "/" + testBasePath + "/" + apiDirName);
     }
 
     @Override
     public String modelTestFileFolder() {
-        return (outputFolder + "/" + toPackagePath(testPackage, srcBasePath));
+        return (outputFolder + "/" + getPackagePath() + "/" + testBasePath + "/" + modelDirName);
     }
 
     @Override
     public String apiDocFileFolder() {
-        //return (outputFolder + "/" + apiDocPath).replace('/', File.separatorChar);
         return (outputFolder + "/" + getPackagePath() + "/" + apiDocPath);
     }
 
     @Override
     public String modelDocFileFolder() {
-        //return (outputFolder + "/" + modelDocPath).replace('/', File.separatorChar);
         return (outputFolder + "/" + getPackagePath() + "/" + modelDocPath);
     }
 
@@ -624,4 +654,28 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         // process enum in models
         return postProcessModelsEnum(objs);
     }
+
+    @Override
+    public Map<String, Object> postProcessOperations(Map<String, Object> objs) {
+        Map<String, Object> operations = (Map<String, Object>) objs.get("operations");
+        List<CodegenOperation> operationList = (List<CodegenOperation>) operations.get("operation");
+        for (CodegenOperation op : operationList) {
+            // for API test method name
+            // e.g. public function test{{vendorExtensions.x-testOperationId}}()
+            op.vendorExtensions.put("x-testOperationId", camelize(op.operationId));
+        }
+        return objs;
+    }
+
+    @Override
+    public String escapeQuotationMark(String input) {
+        // remove ' to avoid code injection
+        return input.replace("'", "");
+    }
+
+    @Override
+    public String escapeUnsafeCharacters(String input) {
+        return input.replace("*/", "*_/").replace("/*", "/_*");
+    }
+
 }
