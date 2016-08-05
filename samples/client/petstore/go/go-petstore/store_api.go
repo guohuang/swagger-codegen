@@ -23,10 +23,11 @@
 package petstore
 
 import (
-	"strings"
-	"fmt"
+	"errors"
 	"net/url"
 	"encoding/json"
+	"fmt"
+	"strings"
 )
 
 type StoreApi struct {
@@ -63,6 +64,10 @@ func (a StoreApi) DeleteOrder(orderId string) (*APIResponse, error) {
 	path := a.Configuration.BasePath + "/store/order/{orderId}"
 	path = strings.Replace(path, "{"+"orderId"+"}", fmt.Sprintf("%v", orderId), -1)
 
+	// verify the required parameter 'orderId' is set
+	if &orderId == nil {
+		return nil, errors.New("Missing required parameter 'orderId' when calling StoreApi->DeleteOrder")
+	}
 
 	headerParams := make(map[string]string)
 	queryParams := url.Values{}
@@ -70,6 +75,7 @@ func (a StoreApi) DeleteOrder(orderId string) (*APIResponse, error) {
 	var postBody interface{}
 	var fileName string
 	var fileBytes []byte
+
 	// add default headers if any
 	for key := range a.Configuration.DefaultHeader {
 		headerParams[key] = a.Configuration.DefaultHeader[key]
@@ -123,9 +129,11 @@ func (a StoreApi) GetInventory() (*map[string]int32, *APIResponse, error) {
 	var postBody interface{}
 	var fileName string
 	var fileBytes []byte
-	// authentication '(api_key)' required
+	// authentication (api_key) required
+
 	// set key with prefix in header
 	headerParams["api_key"] = a.Configuration.GetAPIKeyWithPrefix("api_key")
+
 	// add default headers if any
 	for key := range a.Configuration.DefaultHeader {
 		headerParams[key] = a.Configuration.DefaultHeader[key]
@@ -173,6 +181,10 @@ func (a StoreApi) GetOrderById(orderId int64) (*Order, *APIResponse, error) {
 	path := a.Configuration.BasePath + "/store/order/{orderId}"
 	path = strings.Replace(path, "{"+"orderId"+"}", fmt.Sprintf("%v", orderId), -1)
 
+	// verify the required parameter 'orderId' is set
+	if &orderId == nil {
+		return new(Order), nil, errors.New("Missing required parameter 'orderId' when calling StoreApi->GetOrderById")
+	}
 
 	headerParams := make(map[string]string)
 	queryParams := url.Values{}
@@ -180,6 +192,7 @@ func (a StoreApi) GetOrderById(orderId int64) (*Order, *APIResponse, error) {
 	var postBody interface{}
 	var fileName string
 	var fileBytes []byte
+
 	// add default headers if any
 	for key := range a.Configuration.DefaultHeader {
 		headerParams[key] = a.Configuration.DefaultHeader[key]
@@ -227,6 +240,10 @@ func (a StoreApi) PlaceOrder(body Order) (*Order, *APIResponse, error) {
 	// create path and map variables
 	path := a.Configuration.BasePath + "/store/order"
 
+	// verify the required parameter 'body' is set
+	if &body == nil {
+		return new(Order), nil, errors.New("Missing required parameter 'body' when calling StoreApi->PlaceOrder")
+	}
 
 	headerParams := make(map[string]string)
 	queryParams := url.Values{}
@@ -234,6 +251,7 @@ func (a StoreApi) PlaceOrder(body Order) (*Order, *APIResponse, error) {
 	var postBody interface{}
 	var fileName string
 	var fileBytes []byte
+
 	// add default headers if any
 	for key := range a.Configuration.DefaultHeader {
 		headerParams[key] = a.Configuration.DefaultHeader[key]
